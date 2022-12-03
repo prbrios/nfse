@@ -1,0 +1,10 @@
+/target/
+/.project
+/.factorypath
+/.classpath
+/.idea
+/.vscode
+/*.log
+/*.xml
+/*.pdf
+/*.pfx
