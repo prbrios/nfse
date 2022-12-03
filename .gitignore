@@ -5,6 +5,6 @@
 /.idea
 /.vscode
 /*.log
-/*.xml
 /*.pdf
 /*.pfx
+/.editorconfig
