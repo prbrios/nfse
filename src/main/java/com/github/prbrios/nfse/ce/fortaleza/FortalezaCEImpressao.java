@@ -1,5 +1,6 @@
 package com.github.prbrios.nfse.ce.fortaleza;
 
+import com.github.prbrios.nfse.FileResourcesUtils;
 import com.github.prbrios.nfse.impressao.InformacoesPrestador;
 import com.github.prbrios.nfse.model.ginfes.v3.tipos.Nfse;
 import com.github.prbrios.nfse.model.ginfes.v3.tipos.Rps;
@@ -12,11 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class FortalezaCEImpressao implements com.github.prbrios.nfse.impressao.Impressao {
@@ -29,7 +33,7 @@ class FortalezaCEImpressao implements com.github.prbrios.nfse.impressao.Impressa
     private String logomarca;
     private InformacoesPrestador prestador;
 
-    private static final String ARQUIVO_JASPER = "2304400-nfse.jasper";
+    private static final String ARQUIVO_JASPER = "jasper/2304400-nfse.jasper";
 
     private String Nfse_InfNfse_Numero;
     private String Nfse_InfNfse_CodigoVerificacao;
@@ -274,9 +278,15 @@ class FortalezaCEImpressao implements com.github.prbrios.nfse.impressao.Impressa
         Map<String, Object> params = this.toMap();
         if (this.logomarca != null)
             params.put("Logo", this.logomarca);
-        File file = new File(classLoader.getResource(ARQUIVO_JASPER).getFile());
-        JasperPrint jp = JasperFillManager.fillReport(file.getPath(), params, new JREmptyDataSource());
-        return JasperExportManager.exportReportToPdf(jp);
+
+        FileResourcesUtils app = new FileResourcesUtils();
+        InputStream is = app.getFileFromResourceJAR("jasper", "jasper/2304400-nfse.jasper");
+        if (is != null) {
+            JasperPrint jp = JasperFillManager.fillReport(is, params, new JREmptyDataSource());
+            return JasperExportManager.exportReportToPdf(jp);
+        }
+
+        throw new Exception("Falha ao gerar o PDF");
 
     }
 
