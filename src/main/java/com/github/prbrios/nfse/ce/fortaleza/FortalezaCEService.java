@@ -20,6 +20,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.Base64;
+import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 
 public class FortalezaCEService implements Servico<EnviarLoteRpsEnvio, EnviarLoteRpsResposta, ConsultarLoteRpsEnvio, ConsultarLoteRpsResposta, CancelarNfseEnvio, CancelarNfseResposta> {
     private static final Logger LOG = LoggerFactory.getLogger(FortalezaCEService.class);
@@ -30,9 +32,12 @@ public class FortalezaCEService implements Servico<EnviarLoteRpsEnvio, EnviarLot
     private static final String FALHA_CNPJ_NUMERO = "Falha ao obter o CNPJ do prestador e o numero da NFS-e do objeto cancelarNfseEnvio";
     private static final String FALHA_SALVAR_ARQUIVO = "Falha ao salvar o arquivo %s";
 
-    public FortalezaCEService(Configuracao config) {
+    public FortalezaCEService(Configuracao config) throws Exception {
         this.persister = new Persister(new Format(0));
         this.config = config;
+
+        ProtocolSocketFactory socket = new APISocketFactory(this.config.getCertificado(), this.config.getSenhaCertificado(), "cacerts", "123456");
+        Protocol.registerProtocol("https", new Protocol("https", socket, 443));
     }
 
     @Override
