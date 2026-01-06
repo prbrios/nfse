@@ -43,7 +43,7 @@ public abstract class ServiceGinfesImplServiceServiceCallbackHandler {
      * override this method for handling normal response from cancelarNfse operation
      */
     public void receiveResultcancelarNfse(
-        com.github.prbrios.nfse.ce.fortaleza.webservice.ServiceGinfesImplServiceServiceStub.CancelarNfseResponse result) {
+        ServiceGinfesImplServiceServiceStub.CancelarNfseResponse result) {
     }
 
     /**
@@ -54,11 +54,26 @@ public abstract class ServiceGinfesImplServiceServiceCallbackHandler {
     }
 
     /**
+     * auto generated Axis2 call back method for recepcionarLoteRpsV4 method
+     * override this method for handling normal response from recepcionarLoteRpsV4 operation
+     */
+    public void receiveResultrecepcionarLoteRpsV4(
+        ServiceGinfesImplServiceServiceStub.RecepcionarLoteRpsV4Response result) {
+    }
+
+    /**
+     * auto generated Axis2 Error handler
+     * override this method for handling error response from recepcionarLoteRpsV4 operation
+     */
+    public void receiveErrorrecepcionarLoteRpsV4(Exception e) {
+    }
+
+    /**
      * auto generated Axis2 call back method for recepcionarLoteRpsV3 method
      * override this method for handling normal response from recepcionarLoteRpsV3 operation
      */
     public void receiveResultrecepcionarLoteRpsV3(
-        com.github.prbrios.nfse.ce.fortaleza.webservice.ServiceGinfesImplServiceServiceStub.RecepcionarLoteRpsV3Response result) {
+        ServiceGinfesImplServiceServiceStub.RecepcionarLoteRpsV3Response result) {
     }
 
     /**
@@ -73,7 +88,7 @@ public abstract class ServiceGinfesImplServiceServiceCallbackHandler {
      * override this method for handling normal response from consultarLoteRpsV3 operation
      */
     public void receiveResultconsultarLoteRpsV3(
-        com.github.prbrios.nfse.ce.fortaleza.webservice.ServiceGinfesImplServiceServiceStub.ConsultarLoteRpsV3Response result) {
+        ServiceGinfesImplServiceServiceStub.ConsultarLoteRpsV3Response result) {
     }
 
     /**
@@ -84,11 +99,26 @@ public abstract class ServiceGinfesImplServiceServiceCallbackHandler {
     }
 
     /**
+     * auto generated Axis2 call back method for consultarNfsePorRpsV4 method
+     * override this method for handling normal response from consultarNfsePorRpsV4 operation
+     */
+    public void receiveResultconsultarNfsePorRpsV4(
+        ServiceGinfesImplServiceServiceStub.ConsultarNfsePorRpsV4Response result) {
+    }
+
+    /**
+     * auto generated Axis2 Error handler
+     * override this method for handling error response from consultarNfsePorRpsV4 operation
+     */
+    public void receiveErrorconsultarNfsePorRpsV4(Exception e) {
+    }
+
+    /**
      * auto generated Axis2 call back method for consultarNfsePorRpsV3 method
      * override this method for handling normal response from consultarNfsePorRpsV3 operation
      */
     public void receiveResultconsultarNfsePorRpsV3(
-        com.github.prbrios.nfse.ce.fortaleza.webservice.ServiceGinfesImplServiceServiceStub.ConsultarNfsePorRpsV3Response result) {
+        ServiceGinfesImplServiceServiceStub.ConsultarNfsePorRpsV3Response result) {
     }
 
     /**
@@ -99,11 +129,41 @@ public abstract class ServiceGinfesImplServiceServiceCallbackHandler {
     }
 
     /**
+     * auto generated Axis2 call back method for consultarLoteRpsV4 method
+     * override this method for handling normal response from consultarLoteRpsV4 operation
+     */
+    public void receiveResultconsultarLoteRpsV4(
+        ServiceGinfesImplServiceServiceStub.ConsultarLoteRpsV4Response result) {
+    }
+
+    /**
+     * auto generated Axis2 Error handler
+     * override this method for handling error response from consultarLoteRpsV4 operation
+     */
+    public void receiveErrorconsultarLoteRpsV4(Exception e) {
+    }
+
+    /**
+     * auto generated Axis2 call back method for consultarNfseV4 method
+     * override this method for handling normal response from consultarNfseV4 operation
+     */
+    public void receiveResultconsultarNfseV4(
+        ServiceGinfesImplServiceServiceStub.ConsultarNfseV4Response result) {
+    }
+
+    /**
+     * auto generated Axis2 Error handler
+     * override this method for handling error response from consultarNfseV4 operation
+     */
+    public void receiveErrorconsultarNfseV4(Exception e) {
+    }
+
+    /**
      * auto generated Axis2 call back method for consultarNfseV3 method
      * override this method for handling normal response from consultarNfseV3 operation
      */
     public void receiveResultconsultarNfseV3(
-        com.github.prbrios.nfse.ce.fortaleza.webservice.ServiceGinfesImplServiceServiceStub.ConsultarNfseV3Response result) {
+        ServiceGinfesImplServiceServiceStub.ConsultarNfseV3Response result) {
     }
 
     /**
@@ -118,7 +178,7 @@ public abstract class ServiceGinfesImplServiceServiceCallbackHandler {
      * override this method for handling normal response from consultarSituacaoLoteRpsV3 operation
      */
     public void receiveResultconsultarSituacaoLoteRpsV3(
-        com.github.prbrios.nfse.ce.fortaleza.webservice.ServiceGinfesImplServiceServiceStub.ConsultarSituacaoLoteRpsV3Response result) {
+        ServiceGinfesImplServiceServiceStub.ConsultarSituacaoLoteRpsV3Response result) {
     }
 
     /**

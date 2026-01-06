@@ -8,3 +8,6 @@
 /*.pdf
 /*.pfx
 /.editorconfig
+
+# Variáveis de ambiente
+.env

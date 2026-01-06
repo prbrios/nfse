@@ -6,20 +6,28 @@ import com.github.prbrios.nfse.impressao.Impressao;
 import com.github.prbrios.nfse.impressao.InformacoesPrestador;
 import com.github.prbrios.nfse.model.ginfes.v2.CancelarNfseEnvio;
 import com.github.prbrios.nfse.model.ginfes.v2.CancelarNfseResposta;
-import com.github.prbrios.nfse.model.ginfes.v3.ConsultarLoteRpsEnvio;
-import com.github.prbrios.nfse.model.ginfes.v3.ConsultarLoteRpsResposta;
-import com.github.prbrios.nfse.model.ginfes.v3.EnviarLoteRpsEnvio;
-import com.github.prbrios.nfse.model.ginfes.v3.EnviarLoteRpsResposta;
+import com.github.prbrios.nfse.model.ginfes.v4.ConsultarLoteRpsEnvio;
+import com.github.prbrios.nfse.model.ginfes.v4.ConsultarLoteRpsResposta;
+import com.github.prbrios.nfse.model.ginfes.v4.EnviarLoteRpsEnvio;
+import com.github.prbrios.nfse.model.ginfes.v4.EnviarLoteRpsResposta;
+
+
+import com.github.prbrios.nfse.model.ginfes.v4.tipos.*;
 
 import org.simpleframework.xml.stream.Format;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.simpleframework.xml.core.Persister;
 
+import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 
@@ -63,26 +71,24 @@ public class FortalezaCEService implements Servico<EnviarLoteRpsEnvio, EnviarLot
             }
 
             String enviarLoteRpsEnvioStrAss =
-                this.assinarEnviarLoteRpsEnvio(enviarLoteRpsEnvio).toString();
+                this.assinarEnviarLoteRpsEnvio(enviarLoteRpsEnvio);
 
             this.salvarArquivo(String.format("EnviarLoteRpsEnvio-%s-%s-%s-%s.xml", System.currentTimeMillis(), cnpj, serie, numero), enviarLoteRpsEnvioStrAss);
 
-            ServiceGinfesImplServiceServiceStub.RecepcionarLoteRpsV3 recepcionarLoteRpsV3 =
-                new ServiceGinfesImplServiceServiceStub.RecepcionarLoteRpsV3();
-            recepcionarLoteRpsV3.setEnviarLoteRpsEnvio(enviarLoteRpsEnvioStrAss);
+            ServiceGinfesImplServiceServiceStub.RecepcionarLoteRpsV4 recepcionarLoteRpsV4 = new ServiceGinfesImplServiceServiceStub.RecepcionarLoteRpsV4();
+            recepcionarLoteRpsV4.setEnviarLoteRpsEnvio(enviarLoteRpsEnvioStrAss);
 
-            ServiceGinfesImplServiceServiceStub stub =
-                new ServiceGinfesImplServiceServiceStub(this.config.getAmbiente().getUrl());
+            ServiceGinfesImplServiceServiceStub stub = new ServiceGinfesImplServiceServiceStub(this.config.getAmbiente().getUrl());
+            ServiceGinfesImplServiceServiceStub.RecepcionarLoteRpsV4Response recepcionarLoteRpsV4Response;
 
-            ServiceGinfesImplServiceServiceStub.RecepcionarLoteRpsV3Response recepcionarLoteRpsV3Response;
             try {
-                recepcionarLoteRpsV3Response = stub.recepcionarLoteRpsV3(recepcionarLoteRpsV3);
+                recepcionarLoteRpsV4Response = stub.recepcionarLoteRpsV4(recepcionarLoteRpsV4);
             } catch (RemoteException e) {
                 LOG.error("Falha ao comunicar com o webservice " + this.config.getAmbiente().getUrl());
                 throw e;
             }
 
-            String enviarLoteRpsResposta = recepcionarLoteRpsV3Response.getEnviarLoteRpsResposta();
+            String enviarLoteRpsResposta = recepcionarLoteRpsV4Response.getEnviarLoteRpsResposta();
             LOG.trace("XML-RESPOSTA: " + enviarLoteRpsResposta);
 
             this.salvarArquivo(String.format("EnviarLoteRpsResposta-%s-%s-%s-%s.xml", System.currentTimeMillis(), cnpj, serie, numero), enviarLoteRpsResposta);
@@ -124,21 +130,17 @@ public class FortalezaCEService implements Servico<EnviarLoteRpsEnvio, EnviarLot
                 throw new Exception(FALHA_CNPJ_PROTOCOLO);
             }
 
-            ConsultarLoteRpsEnvio consultarLoteRpsEnvioAss =
-                this.assinarConsultarLoteRpsEnvio(consultarLoteRpsEnvio);
+            String consultarLoteRpsEnvioAss = this.assinarConsultarLoteRpsEnvio(consultarLoteRpsEnvio);
+            this.salvarArquivo(String.format("ConsultarLoteRpsEnvio-%s-%s-%s.xml", System.currentTimeMillis(), cnpj, protocolo), consultarLoteRpsEnvioAss);
 
-            this.salvarArquivo(String.format("ConsultarLoteRpsEnvio-%s-%s-%s.xml", System.currentTimeMillis(), cnpj, protocolo), consultarLoteRpsEnvioAss.toString());
+            ServiceGinfesImplServiceServiceStub.ConsultarLoteRpsV4 consultarLoteRpsV4 = new ServiceGinfesImplServiceServiceStub.ConsultarLoteRpsV4();
+            consultarLoteRpsV4.setConsultarLoteRpsEnvio(consultarLoteRpsEnvioAss);
 
-            ServiceGinfesImplServiceServiceStub.ConsultarLoteRpsV3 consultarLoteRpsV3 =
-                new ServiceGinfesImplServiceServiceStub.ConsultarLoteRpsV3();
-            consultarLoteRpsV3.setConsultarLoteRpsEnvio(consultarLoteRpsEnvioAss.toString());
+            ServiceGinfesImplServiceServiceStub stub = new ServiceGinfesImplServiceServiceStub(this.config.getAmbiente().getUrl());
+            ServiceGinfesImplServiceServiceStub.ConsultarLoteRpsV4Response result = null;
 
-            ServiceGinfesImplServiceServiceStub stub =
-                new ServiceGinfesImplServiceServiceStub(this.config.getAmbiente().getUrl());
-
-            ServiceGinfesImplServiceServiceStub.ConsultarLoteRpsV3Response result = null;
             try {
-                result = stub.consultarLoteRpsV3(consultarLoteRpsV3);
+                result = stub.consultarLoteRpsV4(consultarLoteRpsV4);
             } catch (RemoteException e) {
                 LOG.error("Falha ao comunicar com o webservice " + this.config.getAmbiente().getUrl());
                 throw e;
@@ -186,14 +188,14 @@ public class FortalezaCEService implements Servico<EnviarLoteRpsEnvio, EnviarLot
                 throw new Exception(FALHA_CNPJ_NUMERO);
             }
 
-            CancelarNfseEnvio cancelarNfseEnvioAss =
+            String cancelarNfseEnvioAss =
                 this.assinarCancelarNfseEnvio(cancelarNfseEnvio);
 
-            this.salvarArquivo(String.format("CancelarNfseEnvio-%s-%s-%s.xml", System.currentTimeMillis(), cnpj, numero), cancelarNfseEnvioAss.toString());
+            this.salvarArquivo(String.format("CancelarNfseEnvio-%s-%s-%s.xml", System.currentTimeMillis(), cnpj, numero), cancelarNfseEnvioAss);
 
             ServiceGinfesImplServiceServiceStub.CancelarNfse cancelarNfse =
                 new ServiceGinfesImplServiceServiceStub.CancelarNfse();
-            cancelarNfse.setCancelarNfseEnvio(cancelarNfseEnvioAss.toString());
+            cancelarNfse.setCancelarNfseEnvio(cancelarNfseEnvioAss);
 
             ServiceGinfesImplServiceServiceStub stub =
                 new ServiceGinfesImplServiceServiceStub(this.config.getAmbiente().getUrl());
@@ -233,7 +235,7 @@ public class FortalezaCEService implements Servico<EnviarLoteRpsEnvio, EnviarLot
         return new FortalezaCEImpressao(xml, logomarca, cancelada, prestador);
     }
 
-    private CancelarNfseEnvio assinarCancelarNfseEnvio(CancelarNfseEnvio cancelarNfseEnvio) throws Exception {
+    private String assinarCancelarNfseEnvio(CancelarNfseEnvio cancelarNfseEnvio) throws Exception {
         LOG.trace("Realizando a assinatura do XML");
 
         String cancelarNfseEnvioStr = cancelarNfseEnvio.toString();
@@ -241,15 +243,10 @@ public class FortalezaCEService implements Servico<EnviarLoteRpsEnvio, EnviarLot
 
         try {
 
-            String cancelarNfseEnvioStrAss = new Assinatura(this.config).assinarRaiz(cancelarNfseEnvio.toString());
+            String cancelarNfseEnvioStrAss = new Assinatura().assinar(cancelarNfseEnvioStr, null, new FileInputStream(this.config.getCertificado()), this.config.getSenhaCertificado());
             LOG.trace("XML assinado (Base64): " + Base64.getEncoder().encodeToString(cancelarNfseEnvioStrAss.getBytes()));
 
-            try {
-                return this.persister.read(CancelarNfseEnvio.class, cancelarNfseEnvioStrAss);
-            } catch (Exception e) {
-                LOG.error("Falha ao converter XML assinado em objeto do tipo CancelarNfseEnvio");
-                throw e;
-            }
+            return cancelarNfseEnvioStrAss;
 
         } catch (Exception e) {
             LOG.error("Falha ao tentar realizar a assinatura do XML");
@@ -257,7 +254,7 @@ public class FortalezaCEService implements Servico<EnviarLoteRpsEnvio, EnviarLot
         }
     }
 
-    private ConsultarLoteRpsEnvio assinarConsultarLoteRpsEnvio(ConsultarLoteRpsEnvio consultarLoteRpsEnvio) throws Exception {
+    private String assinarConsultarLoteRpsEnvio(ConsultarLoteRpsEnvio consultarLoteRpsEnvio) throws Exception {
         LOG.trace("Realizando a assinatura do XML");
 
         String consultarLoteRpsEnvioStr = consultarLoteRpsEnvio.toString();
@@ -265,15 +262,10 @@ public class FortalezaCEService implements Servico<EnviarLoteRpsEnvio, EnviarLot
 
         try {
 
-            String consultarLoteRpsEnvioStrAss = new Assinatura(this.config).assinarRaiz(consultarLoteRpsEnvioStr);
+            String consultarLoteRpsEnvioStrAss = new Assinatura().assinar(consultarLoteRpsEnvioStr, null, new FileInputStream(this.config.getCertificado()), this.config.getSenhaCertificado());
             LOG.trace("XML assinado (Base64): " + Base64.getEncoder().encodeToString(consultarLoteRpsEnvioStrAss.getBytes()));
 
-            try {
-                return this.persister.read(ConsultarLoteRpsEnvio.class, consultarLoteRpsEnvioStrAss);
-            } catch (Exception e) {
-                LOG.error("Falha ao converter XML assinado em objeto do tipo ConsultarLoteRpsEnvio");
-                throw e;
-            }
+            return consultarLoteRpsEnvioStrAss;
 
         } catch (Exception e) {
             LOG.error("Falha ao tentar realizar a assinatura do XML");
@@ -282,7 +274,7 @@ public class FortalezaCEService implements Servico<EnviarLoteRpsEnvio, EnviarLot
 
     }
 
-    private EnviarLoteRpsEnvio assinarEnviarLoteRpsEnvio(EnviarLoteRpsEnvio enviarLoteRpsEnvio) throws Exception {
+    private String assinarEnviarLoteRpsEnvio(EnviarLoteRpsEnvio enviarLoteRpsEnvio) throws Exception {
         LOG.trace("Realizando a assinatura do XML");
 
         String enviarLoteRpsEnvioStr = enviarLoteRpsEnvio.toString();
@@ -290,15 +282,12 @@ public class FortalezaCEService implements Servico<EnviarLoteRpsEnvio, EnviarLot
 
         try {
 
-            String enviarLoteRpsEnvioStrAssinado = new Assinatura(this.config).assinar(enviarLoteRpsEnvioStr);
+            Assinatura assinador = new Assinatura();
+            String rpsAssinado = assinador.assinar(enviarLoteRpsEnvioStr, "InfRps", new FileInputStream(this.config.getCertificado()), this.config.getSenhaCertificado());
+            String enviarLoteRpsEnvioStrAssinado = assinador.assinar(rpsAssinado, "LoteRps", new FileInputStream(this.config.getCertificado()), this.config.getSenhaCertificado());
             LOG.trace("XML assinado (Base64): " + Base64.getEncoder().encodeToString(enviarLoteRpsEnvioStrAssinado.getBytes()));
 
-            try {
-                return this.persister.read(EnviarLoteRpsEnvio.class, enviarLoteRpsEnvioStrAssinado);
-            } catch (Exception e) {
-                LOG.error("Falha ao converter XML assinado em objeto do tipo EnviarLoteRpsEnvio");
-                throw e;
-            }
+            return enviarLoteRpsEnvioStrAssinado;
 
         } catch (Exception e) {
             LOG.error("Falha ao tentar realizar a assinatura do XML");
