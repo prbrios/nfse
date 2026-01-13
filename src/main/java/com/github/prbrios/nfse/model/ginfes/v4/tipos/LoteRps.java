@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.simpleframework.xml.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @JsonRootName("loterps")
 @Root(name = "LoteRps", strict = false)
 public class LoteRps {
@@ -46,25 +43,6 @@ public class LoteRps {
 	@Element(name = "ListaRps", required = false)
 	@Namespace(reference = "http://www.ginfes.com.br/tipos_v03.xsd")
 	protected ListaRps listaRps;
-
-	@JsonRootName("listarps")
-	@Root(name = "ListaRps")
-	public static class ListaRps {
-
-        @JsonInclude(JsonInclude.Include.NON_EMPTY)
-        @JsonProperty("rps")
-        @ElementList(name = "Rps", required = false, inline = true)
-        protected List<Rps> rps = new ArrayList<Rps>();
-
-		public List<Rps> getRps() {
-			return rps;
-		}
-
-		public void setRps(List<Rps> rps) {
-			this.rps = rps;
-		}
-
-	}
 
 	public String getId() {
 		return id;

@@ -141,7 +141,7 @@ public class FortalezaCEServiceTest {
         List<Rps> rpsArr = new ArrayList<>();
         rpsArr.add(rps);
 
-        LoteRps.ListaRps listaRps = new LoteRps.ListaRps();
+        ListaRps listaRps = new ListaRps();
         listaRps.setRps(rpsArr);
 
         LoteRps loteRps = new LoteRps();
