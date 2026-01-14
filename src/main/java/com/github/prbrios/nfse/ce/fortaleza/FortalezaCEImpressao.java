@@ -2,8 +2,10 @@ package com.github.prbrios.nfse.ce.fortaleza;
 
 import com.github.prbrios.nfse.FileResourcesUtils;
 import com.github.prbrios.nfse.impressao.InformacoesPrestador;
-import com.github.prbrios.nfse.model.ginfes.v3.tipos.Nfse;
-import com.github.prbrios.nfse.model.ginfes.v3.tipos.Rps;
+import com.github.prbrios.nfse.model.ginfes.v4.ConsultarLoteRpsResposta;
+import com.github.prbrios.nfse.model.ginfes.v4.EnviarLoteRpsResposta;
+import com.github.prbrios.nfse.model.ginfes.v4.tipos.Nfse;
+import com.github.prbrios.nfse.model.ginfes.v4.tipos.Rps;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -110,6 +112,13 @@ class FortalezaCEImpressao implements com.github.prbrios.nfse.impressao.Impressa
         this.persister = new Persister();
 
         try {
+            ConsultarLoteRpsResposta enviarLoteRpsResposta = this.persister.read(ConsultarLoteRpsResposta.class, xml);
+            this.nfse = enviarLoteRpsResposta.getListaNfse().getCompNfse().get(0).getNfse();
+        } catch (Exception e1) {
+            LOG.warn("Não foi possivel extrair Nfse de ConsultarLoteRpsResposta. {}", e1.getMessage());
+        }
+
+        try {
             this.nfse = this.persister.read(Nfse.class, xml);
         } catch (Exception e1) {
             LOG.warn("XML de NFS-e invalido");
@@ -123,10 +132,10 @@ class FortalezaCEImpressao implements com.github.prbrios.nfse.impressao.Impressa
     }
 
     public byte[] bytesPdf() throws Exception {
-        if (this.rps != null) {
-            return this.criarRpsFile();
-        } else if (this.nfse != null) {
+        if (this.nfse != null) {
             return this.criarNfseFile();
+        } else if (this.rps != null) {
+            return this.criarRpsFile();
         } else {
             throw new Exception("Nao foi possivel criar objeto atraves do XML informado");
         }
